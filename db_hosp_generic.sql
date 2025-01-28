@@ -380,3 +380,67 @@ SELECT  p.nomepaciente,
   JOIN profissionais prof
   ON atu.idprofissional=prof.idprofissional
   GROUP BY p.nomepaciente, tc.num_atendimentos;
+
+
+---ALterar valores nulos
+--1) Verificar se há valores nulos na coluna salarioclt
+SELECT 
+    nome, 
+    COALESCE(salarioclt, 0) AS salarioclt
+FROM 
+    profissionais;
+WHERE salarioclt IS NULL;
+
+--2) Testar com COALESCE() para substituir valores nulos
+SELECT 
+    nome, 
+    COALESCE(salarioclt, 0) AS salarioclt
+FROM 
+    profissionais;
+
+--3) Atualizar valores nulos na coluna salarioclt
+UPDATE 
+    profissionais
+SET
+    salarioclt = 0
+WHERE 
+    salarioclt IS NULL;
+
+--DADOS DUPLICADOS 
+--1) Verificar se há dados duplicados na tabela de pacientes
+SELECT rg, COUNT(rg) AS quantidade
+FROM pacientes
+GROUP BY rg
+HAVING COUNT(rg) > 1;
+--Aqui temos o valor de rg duplicado:  '548702055'
+
+--2) Remover dados duplicados na tabela de pacientes
+DELETE FROM pacientes 
+WHERE idpaciente = (
+	SELECT 	MAX(idpaciente)
+	FROM pacientes
+	WHERE rg = '548702055'
+);
+
+-- DADOS INCONSISTENTES
+--1) vefiricar se há e-mails inválidos na tabela de pacientes
+SELECT *
+FROM pacientes
+WHERE email NOT LIKE '%@%.%';
+
+--2) Identificar valores inválidos
+SELECT *
+FROM trat_planos_trat
+WHERE preco < 0 OR quantidade < 0;
+
+--3) Corrigir valores inválidos com letras maiusculas
+UPDATE clientes
+SET email = LOWER(email);
+
+--4) Padronização de dados
+UPDATE trat_planos_trat
+SET categoria = INITCAP(categoria); -- Capitaliza a primeira letra
+
+--5) Criar restrições
+ALTER TABLE trat_planos_trat
+ADD CONSTRAINT chk_preco CHECK (preco >= 0);
