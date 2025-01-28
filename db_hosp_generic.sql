@@ -300,6 +300,8 @@ $$;
 --Functions
 
 -- Seleção dos dados necessários para exibir informações dos pacientes, médicos e agendamentos
+CREATE VIEW relatorio_hospitalar
+AS
 SELECT 
     p.fullname AS patientname,         -- Nome do paciente
     doc.fullname AS doctorname,        -- Nome do médico
@@ -325,7 +327,8 @@ WHERE
     EXTRACT(MONTH FROM ap.appointmentdate) = 6 -- Filtra os agendamentos do mês de junho
 ORDER BY 
     p.fullname ASC; -- Ordena os resultados alfabeticamente pelo nome do paciente
-
+--USAR VIEW
+SELECT * FROM relatorio_hospitalar;
 
 --Funcao para editar RG
 CREATE OR REPLACE FUNCTION formatar_rg(rg_sem_formatacao VARCHAR)
