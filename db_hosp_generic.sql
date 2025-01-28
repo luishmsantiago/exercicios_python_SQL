@@ -1,6 +1,7 @@
 --Funções de SQL
 --COUNT
 
+--Contagem do número de linhas da tabela profissionais (contagem do número de profissionais).
 SELECT COUNT(*) AS total_profissionais 
 	FROM profissionais;
 
