@@ -360,3 +360,23 @@ SELECT p.nomepaciente, p.nomeplano, tpt.valor AS valor_plano
 	JOIN trat_planos_trat tpt
 	ON p.idpaciente=tpt.idpaciente
 	WHERE nomeplano ILIKE 'v%';
+
+--Consulta com nome do paciente, quantidade de atendimentos e nome dos profissionais que realizou atendimento
+WITH totalconsultas AS (
+	SELECT COUNT(evolucao) AS num_atendimentos, idpaciente
+	FROM prontuarios
+	GROUP BY idpaciente
+)
+SELECT  p.nomepaciente, 
+        tc.num_atendimentos, 
+        STRING_AGG(prof.nome, ', ') AS nome_profissionais
+  FROM pacientes p
+  JOIN totalconsultas tc
+  ON p.idpaciente=tc.idpaciente
+  JOIN prontuarios pro
+  ON p.idpaciente=pro.idpaciente
+  JOIN atualizacao atu
+  ON pro.idprontuario=atu.idprontuario
+  JOIN profissionais prof
+  ON atu.idprofissional=prof.idprofissional
+  GROUP BY p.nomepaciente, tc.num_atendimentos;
